@@ -4,8 +4,6 @@
 
 #define vertex int
 
-// ======= Estructuras =======
-
 typedef struct node *link;
 struct node {
     vertex w;
@@ -13,12 +11,10 @@ struct node {
 };
 
 typedef struct graph {
-    int V;      // número de vértices
-    int A;      // número de arcos
-    link *adj;  // vector de listas de adyacencia
+    int V;
+    int A;
+    link *adj;
 } *Graph;
-
-// ======= Funciones base =======
 
 static link NEWnode(vertex w, link next) {
     link a = malloc(sizeof(struct node));
@@ -38,37 +34,25 @@ Graph GRAPHinit(int V) {
 }
 
 void GRAPHinsertArc(Graph G, vertex v, vertex w) {
-    // Evita duplicados
     for (link a = G->adj[v]; a != NULL; a = a->next)
         if (a->w == w) return;
     G->adj[v] = NEWnode(w, G->adj[v]);
     G->A++;
 }
 
-// PROBLEMA 2:
+// PROBLEMA 3:
 
-int GRAPHoutdeg(Graph G, vertex v) {
-    int count = 0;
+bool GRAPHadjacent(Graph G, vertex v, vertex w) {
     for (link a = G->adj[v]; a != NULL; a = a->next)
-        count++;
-    return count;
+        if (a->w == w)
+            return true;
+    return false;
 }
-
-int GRAPHindeg(Graph G, vertex v) {
-    int count = 0;
-    for (vertex u = 0; u < G->V; u++) {
-        for (link a = G->adj[u]; a != NULL; a = a->next)
-            if (a->w == v) count++;
-    }
-    return count;
-}
-
 
 
 int main() {
-    Graph G = GRAPHinit(6); // Creamos un grafo con 6 vértices (0..5)
+    Graph G = GRAPHinit(6);
 
-    // Insertamos algunos arcos
     GRAPHinsertArc(G, 0, 1);
     GRAPHinsertArc(G, 0, 5);
     GRAPHinsertArc(G, 1, 0);
@@ -77,11 +61,12 @@ int main() {
     GRAPHinsertArc(G, 3, 1);
     GRAPHinsertArc(G, 5, 3);
 
-    printf("\n=== GRADOS DE LOS VERTICES ===\n");
-    for (vertex v = 0; v < G->V; v++) {
-        printf("Vertice %d : outdeg = %d, indeg = %d\n",
-               v, GRAPHoutdeg(G, v), GRAPHindeg(G, v));
-    }
+
+    printf("\n=== PRUEBA DE ADYACENCIA ===\n");
+    printf("0 - 1? %s\n", GRAPHadjacent(G, 0, 1) ? "SI" : "No");
+    printf("1 - 2? %s\n", GRAPHadjacent(G, 1, 2) ? "SI" : "No");
+    printf("5 - 3? %s\n", GRAPHadjacent(G, 5, 3) ? "SI" : "No");
+    printf("4 - 2? %s\n", GRAPHadjacent(G, 4, 2) ? "SI" : "No");
 
     return 0;
 }
